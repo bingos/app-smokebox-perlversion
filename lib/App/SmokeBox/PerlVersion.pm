@@ -46,8 +46,8 @@ sub _stdout {
   my ($self,$in,$pid) = @_[OBJECT,ARG0,ARG1];
   # This is perl, v5.6.2 built for i386-netbsd-thread-multi-64int
   return unless my ($vers,$arch) = $in =~ /^This is perl.+v([0-9\.]+).+built for\s+(\S+)$/;
-  $self->{vers} = $vers;
-  $self->{arch} = $arch;
+  $self->{version} = $vers;
+  $self->{archname} = $arch;
   return;
 }
 
@@ -55,7 +55,7 @@ sub _finished {
   my ($kernel,$self,$code,$pid) = @_[KERNEL,OBJECT,ARG0,ARG1];
   my $return = { };
   $return->{exitcode} = $code;
-  $return->{$_} = $self->{$_} for qw[vers arch context];
+  $return->{$_} = $self->{$_} for qw[version archname context];
   if ( $self->{session}->isa('POE::Session::AnonEvent') ) {
     $self->{session}->( $return );
   }
@@ -71,6 +71,37 @@ q[This is true];
 =pod
 
 =head1 SYNOPSIS
+
+  use strict;
+  use warnings;
+  use POE;
+  use App::SmokeBox::PerlVersion;
+  
+  my $perl = shift || $^X;
+  
+  POE::Session->create(
+    package_states => [
+      main => [qw(_start _result)],
+    ],
+  );
+  
+  $poe_kernel->run();
+  exit 0;
+  
+  sub _start {
+    App::SmokeBox::PerlVersion->version(
+      perl => $perl,
+      event => '_result',
+    );
+    return;
+  }
+  
+  sub _result {
+    my $href = $_[ARG0];
+    print "Perl version: ", $href->{version}, "\n";
+    print "Built for:    ", $href->{archname}, "\n";
+    return;
+  }
 
 =head1 DESCRIPTION
 
@@ -106,8 +137,8 @@ For C<postback> the hashref will be the first item in the arrayref of C<ARG1> in
 The hashref will contain the following keys:
 
   'exitcode', the exit code of the perl executable that was run;
-  'vers', the perl version string;
-  'arch', the perl arch string;
+  'version', the perl version string;
+  'archname', the perl archname string;
   'context', whatever was passed to version();
 
 =cut
