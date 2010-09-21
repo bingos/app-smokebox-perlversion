@@ -5,6 +5,10 @@ use Test::More 'no_plan';
 use POE;
 use_ok('App::SmokeBox::PerlVersion');
 
+diag("Using Perl $^X\n");
+my $output = `$^X -v`;
+diag($output);
+
 POE::Session->create(
   package_states => [
     main => [qw(_start _stop _result)],
