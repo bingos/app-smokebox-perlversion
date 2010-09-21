@@ -45,7 +45,7 @@ sub _start {
 sub _stdout {
   my ($self,$in,$pid) = @_[OBJECT,ARG0,ARG1];
   # This is perl, v5.6.2 built for i386-netbsd-thread-multi-64int
-  return unless my ($vers,$arch) = $in =~ /^This is perl.+v([0-9\.]+).+built for\s+(\S+)$/;
+  return unless my ($vers,$arch) = $in =~ /^This is perl.+?v([0-9\.]+).+?built for\s+(\S+)$/;
   $self->{version} = $vers;
   $self->{archname} = $arch;
   return;
