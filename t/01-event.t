@@ -38,5 +38,6 @@ sub _result {
   is( $href->{context}, 'fubar', 'Context is okay' );
   is( $href->{version}, $Config::Config{version}, 'Version is ' . $Config::Config{version} );
   is( $href->{archname}, $Config::Config{archname}, 'ArchName is ' . $Config::Config{archname} );
+  is( $href->{osvers}, $Config::Config{osvers}, 'OSVers is ' . $Config::Config{osvers} );
   return;
 }
